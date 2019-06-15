@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1187068_l70drrdafd.css">
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <title>GitHub 看板</title>
+</head>
+<body>
+    <main>
+        <section id="repo-board">
+           <div class="container">
+                <!-- <a href="https://github.com/nodejs/node">
+                <div class="repos">
+                    <div class="order">
+                        <span>1</span>
+                    </div>
+                    <div class="info">
+                        <h2>node</h2>
+                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                        <p class="star">303353 star</p>
+                    </div>
+                </div>
+                </a> -->
+           </div>
+           <div class="loading"><span class="iconfont icon-loading"></span></div>
+        </section>
+
+        <section id="user-board">
+            <div class="container">
+                <!-- <a href="#">
+                    <div class="users">
+                        <img src="https://tse2-mm.cn.bing.net/th?id=OIP.6Doso9rKta05IT9-tnXJ_AHaHH&w=182&h=175&c=7&o=5&pid=1.7" alt="">
+                        <h2>ruanyf</h2>
+                    </div>
+                </a> -->
+            </div>
+            <div class="loading"><span class="iconfont icon-loading"></span></div>
+        </section>
+
+        <section id="search">
+            <div class="wrap">
+                <div class="search_area">
+                    <input type="text" placeholder="Search repos"><span class="button">Search</span>
+                </div>
+                <div class="search_result">
+                    <div class="container">
+                        
+                    </div>
+                    <div class="loading"><span class="iconfont icon-loading"></span> </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+      <div class="tabs active"><span class="iconfont icon-rank"></span><p>Top repos</p> </div>
+      <div class="tabs"><span class="iconfont icon-northUS"></span><p>Top users</p></div>
+      <div class="tabs"><span class="iconfont icon-search"></span><p>Search</p></div>
+    </footer>    
+
+    <script>
+        //tabs 管理
+        var Paging = {
+            init: function(){
+                this.$tabs = $('footer>div')
+                this.$pages = $('main>section')
+                this.bind()
+            },
+            //绑定事件
+            bind: function(){
+                var _this = this
+                this.$tabs.on('click',function(){
+                    var $this = $(this)//此处的$(this)，指的是所点击的那个element
+                    var index =$this.index()//获得所点击element的索引
+                    $this.addClass('active')
+                         .siblings().removeClass('active')
+                    _this.$pages.hide()
+                                .eq(index).fadeIn()
+                })
+            }
+        }
+        //判断是否滚动到“底部”，以此来决定是否加载资源
+        var Helpers = {
+            isToBottom: function($viewport, $content) {
+                return $viewport.height() + $viewport.scrollTop() + 30 > $content.height() 
+            }
+         }
+        var RepoBoard={
+            init: function(){
+                var _this = this
+                this.$element = $('#repo-board')
+                this.$content = this.$element.find('.container')
+                this.page = 1
+                this.count = 30
+                this.isFinshed = false
+                this.isLoading = false
+                this.bind()
+                this.start()
+            },   
+            bind: function(){
+                var _this = this
+                this.$element.on('scroll',function(){
+                    console.log(_this.isLoading)
+                    if(_this.isLoading) return;//节流
+                    if(Helpers.isToBottom(_this.$element, _this.$content) && !_this.isFinshed && !_this.isLoading){
+                        console.log('到底啦')
+                        _this.start()
+                    }
+                })
+            },
+            start: function(){
+                var _this = this
+                this.getData(function(result){
+                    // console.log(data)
+                    _this.renderData(result.data)
+                    _this.page++
+                    if(_this.page * _this.count > result.data.total_count){
+                        _this.isFinshed = true
+                    }
+                })
+            },
+            //获取数据
+            getData: function(callback){
+                var _this = this
+                this.isLoading = true
+                this.$element.find('.loading').show()
+                $.ajax({
+                    url: 'https://api.github.com/search/repositories?q=language:javascript&sort=stars&order=desc',
+                    data: {
+                        page: this.page
+                    },
+                    dataType: 'jsonp'
+                }).done(function(ret){
+                    _this.isLoading = false
+                    _this.$element.find('.loading').hide()
+                    callback(ret)
+                })
+            },
+            //渲染数据
+            renderData: function(data){
+                var _this = this
+                data.items.forEach(function(item,index){
+                    var $node = _this.createNode(item,(_this.page-1)*_this.count+index+1)
+                    _this.$content.append($node)
+                })
+            },
+            createNode: function(subject,index){
+                var $node = $(`<a href="https://github.com/nodejs/node">
+                <div class="repos">
+                    <div class="order">
+                        <span>1</span>
+                    </div>
+                    <div class="info">
+                        <h2>node</h2>
+                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                        <p class="star">303353</p> <span>star</span>
+                    </div>
+                </div>
+                </a> `)
+                $node.find('a').attr('href',subject.html_url)
+                $node.find('.repos .order span').text(index)
+                $node.find('.info h2').text(subject.name)
+                $node.find('.info .desc').text(subject.description)
+                $node.find('.info .star').text(subject.stargazers_count)
+                return $node
+            }
+        }
+        var UserBoard = {
+            init: function(){
+                var _this = this
+                this.$element = $('#user-board')
+                this.$content = this.$element.find('.container')
+                this.page = 1
+                this.count = 30
+                this.isFinshed = false
+                this.isLoading = false
+                this.bind()
+                this.start()
+            },
+            bind: function(){
+                var _this = this
+                this.$element.on('scroll',function(){
+                    console.log(_this.isLoading)
+                    if(_this.isLoading) return;//节流
+                    if(Helpers.isToBottom(_this.$element, _this.$content) && !_this.isFinshed && !_this.isLoading){
+                        console.log('到底啦')
+                        _this.start()
+                    }
+                })
+            },
+            start: function(){
+                var _this = this
+                this.getData(function(result){
+                    // console.log(result)
+                    _this.renderData(result.data)
+                    _this.page++
+                    if(_this.page * _this.count > result.data.total_count){
+                        _this.isFinshed = true
+                        console.log('数据全部加载完成？'+_this.isFinshed)
+                    }
+                })
+            },
+            getData: function(callback){
+                var _this = this
+                this.isLoading = true
+                this.$element.find('.loading').show()
+                $.ajax({
+                    url: 'https://api.github.com/search/users?q=followers:>1000+location:china+language:javascript',
+                    data: {
+                        page: this.page
+                    },
+                    dataType: 'jsonp'
+                }).done(function(ret){
+                    _this.isLoading = false
+                    _this.$element.find('.loading').hide()
+                    callback(ret)
+                })
+            },
+            renderData: function(data){
+                var _this = this
+                data.items.forEach(function(item,index){
+                    var $node = _this.createNode(item,(_this.page-1)*_this.count+index+1)
+                    _this.$content.append($node)
+                })
+            },
+            createNode: function(subject,index){
+                var $node = $(`<a href="#">
+                    <div class="users">
+                        <img src="https://tse2-mm.cn.bing.net/th?id=OIP.6Doso9rKta05IT9-tnXJ_AHaHH&w=182&h=175&c=7&o=5&pid=1.7" alt="">
+                        <h2>ruanyf</h2>
+                    </div>
+                </a>`)
+                $node.find('a').attr('href',subject.html_url)
+                $node.find('.users img').attr('src', subject.avatar_url)
+                $node.find('.users h2').text(subject.login)
+                return $node
+            }
+        }
+        var Search = {
+            init: function(){
+                var _this = this
+                this.page = 1
+                this.count = 30
+                this.isLoading = false
+                this.isFinshed = false
+                this.$element = $('#search')
+                this.$content = this.$element.find('.container')
+                this.bind()
+            },
+            bind: function(){
+                var _this = this
+                this.$element.find('.search_area .button').on('click', function(){
+                    _this.start()
+                })
+                this.$element.find('.search_area input').on('keyup', function(e){
+                    if(e.key === 'Enter') {
+                        _this.start()
+                    }
+                })
+                this.$element.on('scroll',function(){
+                    console.log(_this.isLoading)
+                    if(_this.isLoading) return;//节流
+                    if(Helpers.isToBottom(_this.$element, _this.$element.find('.wrap')) && !_this.isFinshed && !_this.isLoading){
+                        console.log('到底啦')
+                        _this.start()
+                    }
+                })
+              
+            },
+            start: function(){
+                var _this = this
+                this.getData(function(result){
+                    console.log(result)
+                    _this.renderData(result.data)
+                    _this.page++
+                    if(_this.page * _this.count > result.data.total_count){
+                        _this.isFinshed = true
+                        console.log('数据全部加载完成？'+_this.isFinshed)
+                    }
+                })
+            },
+            getData: function(callback){
+                var _this = this
+                var keyword = this.$element.find('.search_area input').val()
+                console.log(keyword)
+                this.isLoading = true
+                if(keyword==""){
+                  alert('输入不可为空')
+                    return false
+                }else{
+                    $.ajax({
+                    url:`https://api.github.com/search/repositories?q=${keyword}+language:javascript&sort=stars&order=desc&page=${_this.page}`,
+                    dataType: 'jsonp'    
+                    }).done(function(ret){
+                        _this.isLoading = false
+                        callback(ret)
+                    })
+                }
+            },
+            renderData: function(data){
+                var _this = this
+                data.items.forEach(function(item,index){
+                    var $node = _this.createNode(item,(_this.page-1)*_this.count+index+1)
+                    _this.$content.append($node)
+                })
+            },
+            createNode: function(subject,index){
+                var $node = $(`<a href="https://github.com/nodejs/node">
+                <div class="repos">
+                    <div class="order">
+                        <span>1</span>
+                    </div>
+                    <div class="info">
+                        <h2>node</h2>
+                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                        <p class="star">303353</p> <span>star</span>
+                    </div>
+                </div>
+                </a> `)
+                $node.find('a').attr('href',subject.html_url)
+                $node.find('.repos .order span').text(index)
+                $node.find('.info h2').text(subject.name)
+                $node.find('.info .desc').text(subject.description)
+                $node.find('.info .star').text(subject.stargazers_count)
+                return $node
+            }
+        }
+        var App = {
+            init: function(){
+                Paging.init()
+                RepoBoard.init()
+                UserBoard.init()
+                Search.init()
+            }
+        }
+        App.init()
+
+    </script>
+</body>
+</html>

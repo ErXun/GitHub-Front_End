@@ -1,0 +1,124 @@
+body{
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #777;
+    height: 100vh;
+}
+/* main */
+html,body,main{
+    height: 100%;
+}
+main{
+    display: flex;
+    flex-direction: column;
+}
+main>section{
+    height: calc(100% - 45px);
+    overflow: scroll;
+}
+main>section{
+    display: none;
+}
+section:first-child{
+    display: block;
+}
+/* reposity */
+.repos{
+    padding: 5px;
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+.repos .order{
+    flex-direction: column;
+    justify-content: center;
+    padding: 25px 0;
+}
+.repos .order span{
+    display:inline-block;
+    border: 1px solid;  
+    background: green;
+    color: #fff;
+    padding: 3px;
+}
+.repos .info{
+    margin-left: 15px;
+}
+.repos .info h2{
+    color: #333;
+}
+.repos .info .star,span{
+    display: inline-block;
+    color: #777;
+}
+.repos .info p,h2{
+    margin: 5px 0;
+}
+/* users */
+.users{
+    padding: 20px 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+}
+.users img{
+    width: 65px;
+    height: 65px;
+    border-radius: 5px;
+}
+.users h2{
+   margin-left: 10px;
+}
+/* search */
+.search_area{
+    margin: 10px 0 10px 10px;
+    height: 40px;
+    position: relative;
+}
+.search_area input{
+    display: inline-block;
+    width: calc(100% - 65px);
+    padding: 11px;
+    border: none;
+    background: #eee;
+    border-radius: 3px;
+}
+.search_area .button{
+    position: absolute;
+    right: 0;
+    padding: 11px;
+    background: #FF5722;
+    border-radius: 3px;
+    color: white;
+    cursor: pointer;
+}
+.loading{
+    text-align: center;
+    padding: 10px;
+    display: none;
+}
+.loading .iconfont{
+    display: inline-block;
+    animation: 1s rotate linear infinite;
+  }
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg);  }
+}
+/* footer */
+footer{
+    width: 100%;
+    border: 1px solid #ccc;  
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    background: #fff;
+}
+footer .tabs{
+    /* border: 1px solid; */
+    text-align: center;
+    padding: 5px 0;
+}
+footer .tabs.active{
+    color: #ff5722;
+}
+
