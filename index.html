@@ -14,30 +14,25 @@
     <main>
         <section id="repo-board">
            <div class="container">
-                <!-- <a href="https://github.com/nodejs/node">
-                <div class="repos">
-                    <div class="order">
-                        <span>1</span>
-                    </div>
-                    <div class="info">
-                        <h2>node</h2>
-                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
-                        <p class="star">303353 star</p>
-                    </div>
-                </div>
-                </a> -->
+                <!-- <div class="repos">
+                    <a href="#">
+                        <div class="order">
+                            <span>1</span>
+                        </div>
+                        <div class="info">
+                            <h2>node</h2>
+                            <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                            <p class="star">303353 star</p>
+                        </div>
+                    </a> 
+                </div> -->
            </div>
            <div class="loading"><span class="iconfont icon-loading"></span></div>
         </section>
 
         <section id="user-board">
             <div class="container">
-                <!-- <a href="#">
-                    <div class="users">
-                        <img src="https://tse2-mm.cn.bing.net/th?id=OIP.6Doso9rKta05IT9-tnXJ_AHaHH&w=182&h=175&c=7&o=5&pid=1.7" alt="">
-                        <h2>ruanyf</h2>
-                    </div>
-                </a> -->
+               
             </div>
             <div class="loading"><span class="iconfont icon-loading"></span></div>
         </section>
@@ -115,7 +110,6 @@
             start: function(){
                 var _this = this
                 this.getData(function(result){
-                    // console.log(data)
                     _this.renderData(result.data)
                     _this.page++
                     if(_this.page * _this.count > result.data.total_count){
@@ -149,20 +143,20 @@
                 })
             },
             createNode: function(subject,index){
-                var $node = $(`<a href="https://github.com/nodejs/node">
-                <div class="repos">
-                    <div class="order">
-                        <span>1</span>
-                    </div>
-                    <div class="info">
-                        <h2>node</h2>
-                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
-                        <p class="star">303353</p> <span>star</span>
-                    </div>
-                </div>
-                </a> `)
+                var $node = $(`<div class="repos">
+                    <a href="#">
+                        <div class="order">
+                            <span>1</span>
+                        </div>
+                        <div class="info">
+                            <h2>node</h2>
+                            <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                            <p class="star">303353</p> <span>star</span>
+                        </div>
+                    </a>
+                </div>`)
                 $node.find('a').attr('href',subject.html_url)
-                $node.find('.repos .order span').text(index)
+                $node.find('.order span').text(index)
                 $node.find('.info h2').text(subject.name)
                 $node.find('.info .desc').text(subject.description)
                 $node.find('.info .star').text(subject.stargazers_count)
@@ -195,7 +189,7 @@
             start: function(){
                 var _this = this
                 this.getData(function(result){
-                    // console.log(result)
+                    console.log(result)
                     _this.renderData(result.data)
                     _this.page++
                     if(_this.page * _this.count > result.data.total_count){
@@ -228,15 +222,15 @@
                 })
             },
             createNode: function(subject,index){
-                var $node = $(`<a href="#">
-                    <div class="users">
-                        <img src="https://tse2-mm.cn.bing.net/th?id=OIP.6Doso9rKta05IT9-tnXJ_AHaHH&w=182&h=175&c=7&o=5&pid=1.7" alt="">
-                        <h2>ruanyf</h2>
-                    </div>
-                </a>`)
+                var $node = $(`<div class="users">
+                        <a href="#">
+                            <img src="#" alt="">
+                            <h2>ruanyf</h2>
+                        </a>
+                    </div>`)
                 $node.find('a').attr('href',subject.html_url)
-                $node.find('.users img').attr('src', subject.avatar_url)
-                $node.find('.users h2').text(subject.login)
+                $node.find('a img').attr('src',subject.avatar_url)
+                $node.find('a h2').text(subject.login)
                 return $node
             }
         }
@@ -269,12 +263,10 @@
                         _this.start()
                     }
                 })
-              
             },
             start: function(){
                 var _this = this
                 this.getData(function(result){
-                    console.log(result)
                     _this.renderData(result.data)
                     _this.page++
                     if(_this.page * _this.count > result.data.total_count){
@@ -309,20 +301,20 @@
                 })
             },
             createNode: function(subject,index){
-                var $node = $(`<a href="https://github.com/nodejs/node">
-                <div class="repos">
-                    <div class="order">
-                        <span>1</span>
-                    </div>
-                    <div class="info">
-                        <h2>node</h2>
-                        <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
-                        <p class="star">303353</p> <span>star</span>
-                    </div>
-                </div>
-                </a> `)
+                var $node = $(`<div class="repos">
+                    <a href="https://github.com/nodejs/node">
+                        <div class="order">
+                            <span>1</span>
+                        </div>
+                        <div class="info">
+                            <h2>node</h2>
+                            <p class="desc">Node.js JavaScript runtime :sparkles::turtle::rocket::sparkles:</p>
+                            <p class="star">303353</p> <span>star</span>
+                        </div>
+                    </a>
+                </div>`)
                 $node.find('a').attr('href',subject.html_url)
-                $node.find('.repos .order span').text(index)
+                $node.find('.order span').text(index)
                 $node.find('.info h2').text(subject.name)
                 $node.find('.info .desc').text(subject.description)
                 $node.find('.info .star').text(subject.stargazers_count)
