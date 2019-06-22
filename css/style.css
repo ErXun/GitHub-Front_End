@@ -25,8 +25,10 @@ section:first-child{
 /* reposity */
 .repos{
     padding: 5px;
-    display: flex;
     border-bottom: 1px solid #ccc;
+}
+.repos a{
+    display: flex;
 }
 .repos .order{
     flex-direction: column;
@@ -42,6 +44,7 @@ section:first-child{
 }
 .repos .info{
     margin-left: 15px;
+    /* border: 1px solid; */
 }
 .repos .info h2{
     color: #333;
@@ -57,6 +60,8 @@ section:first-child{
 .users{
     padding: 20px 10px;
     border-bottom: 1px solid #ccc;
+}
+.users a{
     display: flex;
 }
 .users img{
